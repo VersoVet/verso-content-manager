@@ -15,10 +15,10 @@ from src.modules.seo.routes import router as seo_router
 from src.modules.templates.routes import router as templates_router
 
 try:
-    from onyx_sdk import OnyxClient
+    from onyx_sdk import OnyxClient  # type: ignore[import-untyped]
     _onyx_client = OnyxClient()
 except ImportError:
-    _onyx_client = None  # type: ignore[assignment]
+    _onyx_client = None
 
 logger = logging.getLogger(__name__)
 
