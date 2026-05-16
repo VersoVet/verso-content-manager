@@ -1,0 +1,33 @@
+{
+  "_template": "presse",
+  "_description": "Article de presse / actualité",
+  "title": "[TITRE DE L'ARTICLE]",
+  "excerpt": "[Résumé accrocheur ~160 caractères]",
+  "status": "draft",
+  "categories": ["Actualités"],
+  "tags": [],
+  "seo_keywords": [],
+  "blocks": [
+    {
+      "type": "text",
+      "heading": "[Chapô / Introduction]",
+      "content": "<p>[Paragraphe d'introduction]</p>"
+    },
+    {
+      "type": "image",
+      "url": "[URL_IMAGE]",
+      "alt": "[Description de l'image]",
+      "caption": "[Légende optionnelle]"
+    },
+    {
+      "type": "text",
+      "heading": "[Corps de l'article]",
+      "content": "<p>[Développement du sujet]</p><p>[Paragraphes supplémentaires]</p>"
+    },
+    {
+      "type": "cta",
+      "text": "Prendre rendez-vous",
+      "url": "/consultation/"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "core": {
+    "name": "verso-content-manager",
+    "type": "python",
+    "version": "1.0.0",
+    "description": "Content management system for verso-vet.com articles via WordPress REST API",
+    "brain_area": "cerebellum",
+    "routing": {
+      "port": 8091
+    }
+  },
+  "forge": {
+    "type": "python",
+    "development": {
+      "dev_platform": "dendrite",
+      "test_platform": "dendrite"
+    }
+  },
+  "heart": {
+    "deployment": {
+      "target_host": "10.0.0.44",
+      "platform": "linux",
+      "service_name": "verso-content-manager",
+      "restart_policy": "always"
+    },
+    "secrets": [
+      "wordpress_credentials"
+    ]
+  }
+}

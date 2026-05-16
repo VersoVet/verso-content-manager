@@ -1,0 +1,45 @@
+{
+  "_template": "outil",
+  "_description": "Article sur un outil ou équipement de rééducation",
+  "title": "[Nom de l'outil] : [Bénéfice clé]",
+  "excerpt": "[Résumé de l'outil ~160 caractères]",
+  "status": "draft",
+  "categories": ["Équipements"],
+  "tags": [],
+  "seo_keywords": [],
+  "blocks": [
+    {
+      "type": "text",
+      "heading": "Présentation",
+      "content": "<p>[Description complète de l'outil et ses caractéristiques]</p>"
+    },
+    {
+      "type": "two_columns",
+      "left": {
+        "type": "image",
+        "url": "[URL_IMAGE]",
+        "alt": "[Nom de l'outil]",
+        "caption": "[Légende optionnelle]"
+      },
+      "right": {
+        "type": "text",
+        "content": "<p>[Fonctionnement et utilisation de l'outil]</p>"
+      }
+    },
+    {
+      "type": "text",
+      "heading": "Indications",
+      "content": "<ul><li>[Indication 1]</li><li>[Indication 2]</li><li>[Indication 3]</li></ul>"
+    },
+    {
+      "type": "text",
+      "heading": "Résultats cliniques",
+      "content": "<p>[Études de cas et résultats cliniques]</p>"
+    },
+    {
+      "type": "cta",
+      "text": "En savoir plus",
+      "url": "/consultation/"
+    }
+  ]
+}

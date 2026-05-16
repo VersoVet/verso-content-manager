@@ -1,0 +1,48 @@
+{
+  "_template": "pathologie",
+  "_description": "Article sur une pathologie animale",
+  "title": "[Nom de la pathologie] chez [l'espèce]",
+  "excerpt": "[Résumé diagnostique ~160 caractères]",
+  "status": "draft",
+  "categories": ["Santé animale"],
+  "tags": [],
+  "seo_keywords": [],
+  "blocks": [
+    {
+      "type": "text",
+      "heading": "Qu'est-ce que [la pathologie] ?",
+      "content": "<p>[Définition complète de la pathologie]</p>"
+    },
+    {
+      "type": "text",
+      "heading": "Symptômes",
+      "content": "<ul><li>[Symptôme 1]</li><li>[Symptôme 2]</li><li>[Symptôme 3]</li></ul>"
+    },
+    {
+      "type": "image",
+      "url": "[URL_IMAGE]",
+      "alt": "[Description de l'image]",
+      "caption": "[Légende optionnelle]"
+    },
+    {
+      "type": "text",
+      "heading": "Diagnostic",
+      "content": "<p>[Méthodes diagnostiques et examens]</p>"
+    },
+    {
+      "type": "text",
+      "heading": "Traitement",
+      "content": "<p>[Options thérapeutiques disponibles]</p>"
+    },
+    {
+      "type": "text",
+      "heading": "Prévention",
+      "content": "<p>[Conseils préventifs et mesures recommandées]</p>"
+    },
+    {
+      "type": "cta",
+      "text": "Consulter un vétérinaire",
+      "url": "/consultation/"
+    }
+  ]
+}
