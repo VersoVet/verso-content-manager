@@ -1,6 +1,6 @@
 {
   "name": "verso-content-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "core": {
     "name": "verso-content-manager",
     "type": "python",
@@ -16,7 +16,9 @@
     "repository": "VersoVet/verso-content-manager",
     "development": {
       "dev_platform": "dendrite",
-      "test_platform": "dendrite"
+      "test_platform": "dendrite",
+      "dev_status": "deployed",
+      "progress_percent": 100
     }
   },
   "heart": {
