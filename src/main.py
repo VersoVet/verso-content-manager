@@ -15,12 +15,22 @@ from src.modules.seo.routes import router as seo_router
 from src.modules.templates.routes import router as templates_router
 
 try:
-    from onyx_sdk import OnyxClient  # type: ignore[import-untyped]
-    _onyx_client = OnyxClient()
+    from onyx_sdk import OnyxClient, SkillStatus  # type: ignore[import-untyped]
+    SDK_AVAILABLE = True
 except ImportError:
-    _onyx_client = None
+    SDK_AVAILABLE = False
+    SkillStatus = None  # type: ignore[assignment]
+
+
+class _NullOnyx:
+    """Stub client when SDK is unavailable."""
+
+    def status(self, *args: Any, **kwargs: Any) -> None:
+        """No-op status report."""
+
 
 logger = logging.getLogger(__name__)
+_onyx_client: Any = None
 
 
 @asynccontextmanager
@@ -33,14 +43,29 @@ async def lifespan(app: FastAPI) -> Any:
     Yields:
         Control to application.
     """
+    global _onyx_client
+
     logger.info(f"{SERVICE_NAME} started on port {PORT}")
-    if _onyx_client:
-        await _onyx_client.start()
-        _onyx_client.report_status("UP")
+
+    # Initialize Onyx SDK if available
+    if SDK_AVAILABLE:
+        try:
+            _onyx_client = OnyxClient(SERVICE_NAME, "cerebellum", port=PORT)
+            _onyx_client.status(SkillStatus.STARTING, "Initializing...")
+            _onyx_client.status(SkillStatus.UP, "Ready")
+            logger.info("Onyx SDK initialized")
+        except Exception as e:
+            logger.warning(f"Failed to initialize Onyx SDK: {e}")
+            _onyx_client = _NullOnyx()
+    else:
+        _onyx_client = _NullOnyx()
+
     yield
-    if _onyx_client:
-        _onyx_client.report_status("DOWN")
-        await _onyx_client.stop()
+
+    # Shutdown
+    if _onyx_client and isinstance(_onyx_client, OnyxClient):
+        _onyx_client.status(SkillStatus.DOWN, "Shutting down")
+
     logger.info(f"{SERVICE_NAME} shutting down")
 
 
