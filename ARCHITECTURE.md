@@ -135,7 +135,13 @@ WordPress article operations:
 - `list_articles()`: List with filtering and search
 - Helper functions for category/tag name-to-ID mapping
 
-### 7. Media Optimizer (src/modules/media/optimizer.py)
+### 7. Media Service (src/modules/media/service.py)
+
+Orchestrates media pipeline: download → optimize → upload.
+- `create_media_from_url()`: Full pipeline for external URLs
+- Combines optimizer + uploader into single service layer
+
+### 8. Media Optimizer (src/modules/media/optimizer.py)
 
 Image processing pipeline:
 - HTTP download from external URLs
@@ -143,7 +149,7 @@ Image processing pipeline:
 - Responsive resizing based on context (featured: 1200x630, article: 1000x600, column: 600x400)
 - Quality optimization (WEBP_QUALITY = 85)
 
-### 8. Media Uploader (src/modules/media/uploader.py)
+### 9. Media Uploader (src/modules/media/uploader.py)
 
 WordPress media library integration:
 - Upload optimized images to `/wp/v2/media`
@@ -151,7 +157,7 @@ WordPress media library integration:
 - Return WordPress media URLs
 - Wrapper for optimizer + upload pipeline
 
-### 9. SEO Service (src/modules/seo/service.py)
+### 10. SEO Service (src/modules/seo/service.py)
 
 Taxonomy management:
 - Fetch categories and tags
@@ -159,14 +165,14 @@ Taxonomy management:
 - Create new tags with optional slugs
 - Category/tag name-to-ID conversion utilities
 
-### 10. Template Service (src/modules/templates/service.py)
+### 11. Template Service (src/modules/templates/service.py)
 
 Template file management:
 - Load JSON templates from `/templates/` directory
 - List available templates
 - JSON validation and error handling
 
-### 11. FastAPI Application (src/main.py)
+### 12. FastAPI Application (src/main.py)
 
 - Main app initialization with lifespan management
 - Dashboard HTML with interactive UI

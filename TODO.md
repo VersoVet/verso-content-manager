@@ -64,9 +64,14 @@
 
 ## 🔄 In Progress
 
+- [x] Create src/modules/media/service.py
+- [x] Create test_media.py, test_seo.py, test_templates.py
+- [x] Improve docstring coverage (9 functions)
+- [x] Update manifest.json with lifecycle, dashboard, repository
+- [x] Add OnyxClient.start/stop in lifespan
 - [ ] Code validation (ruff, mypy)
 - [ ] Running pytest
-- [ ] Forge validator
+- [ ] Forge validator (phase 2)
 - [ ] Git commit and review
 
 ## 📋 Pending

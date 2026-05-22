@@ -45,7 +45,14 @@ def build_html(blocks: list[dict[str, Any]]) -> str:
 
 
 def _build_hero(block: dict[str, Any]) -> str:
-    """Build hero section."""
+    """Build full-width hero section with background color.
+
+    Args:
+        block: Block dict with 'text' and optional 'image_url'.
+
+    Returns:
+        HTML string for hero section.
+    """
     text = block.get("text", "")
     image = block.get("image_url", "")
 
@@ -61,7 +68,14 @@ def _build_hero(block: dict[str, Any]) -> str:
 
 
 def _build_text(block: dict[str, Any]) -> str:
-    """Build text section with optional heading."""
+    """Build text section with optional heading and content.
+
+    Args:
+        block: Block dict with 'content' and optional 'heading'.
+
+    Returns:
+        HTML string for text section.
+    """
     heading = block.get("heading")
     content = block.get("content", "")
 
@@ -77,7 +91,14 @@ def _build_text(block: dict[str, Any]) -> str:
 
 
 def _build_image(block: dict[str, Any]) -> str:
-    """Build image section."""
+    """Build centered image section with optional caption.
+
+    Args:
+        block: Block dict with 'url', 'alt', optional 'caption'.
+
+    Returns:
+        HTML string for image section.
+    """
     url = block.get("url", "")
     alt = block.get("alt", "Image")
     caption = block.get("caption", "")
@@ -94,7 +115,14 @@ def _build_image(block: dict[str, Any]) -> str:
 
 
 def _build_two_columns(block: dict[str, Any]) -> str:
-    """Build two-column layout."""
+    """Build two-column responsive grid layout.
+
+    Args:
+        block: Block dict with 'left' and 'right' nested blocks.
+
+    Returns:
+        HTML string for two-column layout.
+    """
     left = block.get("left", {})
     right = block.get("right", {})
 
@@ -110,7 +138,14 @@ def _build_two_columns(block: dict[str, Any]) -> str:
 
 
 def _build_three_columns(block: dict[str, Any]) -> str:
-    """Build three-column layout."""
+    """Build three-column responsive grid layout.
+
+    Args:
+        block: Block dict with 'columns' array of 3 nested blocks.
+
+    Returns:
+        HTML string for three-column layout.
+    """
     columns = block.get("columns", [])
 
     html = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding: 30px;">'
@@ -125,7 +160,14 @@ def _build_three_columns(block: dict[str, Any]) -> str:
 
 
 def _build_list(block: dict[str, Any]) -> str:
-    """Build unordered list."""
+    """Build unordered list from items array.
+
+    Args:
+        block: Block dict with 'items' array of strings.
+
+    Returns:
+        HTML string for unordered list.
+    """
     items = block.get("items", [])
 
     html = '<div style="padding: 30px;">'
@@ -140,7 +182,14 @@ def _build_list(block: dict[str, Any]) -> str:
 
 
 def _build_video(block: dict[str, Any]) -> str:
-    """Build video embed (YouTube/Vimeo)."""
+    """Build embedded video from YouTube or Vimeo URL.
+
+    Args:
+        block: Block dict with 'url' to YouTube or Vimeo video.
+
+    Returns:
+        HTML string for embedded video iframe.
+    """
     url = block.get("url", "")
 
     # Extract video ID from URL
@@ -163,7 +212,14 @@ def _build_video(block: dict[str, Any]) -> str:
 
 
 def _build_cta(block: dict[str, Any]) -> str:
-    """Build call-to-action button."""
+    """Build call-to-action button with link.
+
+    Args:
+        block: Block dict with 'text' (button label) and 'url' (link target).
+
+    Returns:
+        HTML string for CTA button.
+    """
     text = block.get("text", "Cliquer")
     url = block.get("url", "/")
 
@@ -173,7 +229,14 @@ def _build_cta(block: dict[str, Any]) -> str:
 
 
 def _build_quote(block: dict[str, Any]) -> str:
-    """Build blockquote section."""
+    """Build blockquote section with optional author attribution.
+
+    Args:
+        block: Block dict with 'text' (quote) and optional 'author'.
+
+    Returns:
+        HTML string for blockquote.
+    """
     text = block.get("text", "")
     author = block.get("author", "")
 

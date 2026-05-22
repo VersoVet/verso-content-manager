@@ -438,3 +438,9 @@ Interactive web dashboard available at `http://10.0.0.44:8091/`
 - Publish draft articles
 - Delete articles
 - Live preview with syntax highlighting
+
+---
+
+## Updates
+
+- **2026-05-22**: Added service.py, improved docstrings, added tests

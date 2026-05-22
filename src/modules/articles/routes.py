@@ -19,6 +19,13 @@ from src.modules.articles.service import (
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/articles", tags=["articles"])
 
+# Try to get OnyxClient for status reporting
+try:
+    from onyx_sdk import OnyxClient  # type: ignore[import-untyped]
+    _onyx_client = OnyxClient()
+except ImportError:
+    _onyx_client = None
+
 
 @router.post("", response_model=ArticleResponse)
 async def create_article_endpoint(request: ArticleRequest) -> ArticleResponse:
@@ -30,6 +37,9 @@ async def create_article_endpoint(request: ArticleRequest) -> ArticleResponse:
     Returns:
         ArticleResponse with created article data.
     """
+    if _onyx_client:
+        _onyx_client.report_status("WORKING")
+
     try:
         # Convert blocks to HTML
         html_content = build_html(request.blocks)

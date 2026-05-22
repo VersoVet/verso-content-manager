@@ -36,8 +36,10 @@ async def lifespan(app: FastAPI) -> Any:
     logger.info(f"{SERVICE_NAME} started on port {PORT}")
     if _onyx_client:
         await _onyx_client.start()
+        _onyx_client.report_status("UP")
     yield
     if _onyx_client:
+        _onyx_client.report_status("DOWN")
         await _onyx_client.stop()
     logger.info(f"{SERVICE_NAME} shutting down")
 
