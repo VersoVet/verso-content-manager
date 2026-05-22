@@ -27,7 +27,7 @@
       "health_check": "GET /health"
     },
     "deployment": {
-      "target_host": "10.0.0.44",
+      "target_host": "10.0.0.21",
       "platform": "linux",
       "service_name": "verso-content-manager",
       "restart_policy": "always"
