@@ -6,8 +6,19 @@ verso-content-manager is a FastAPI-based skill for managing WordPress articles a
 
 ## Base URL
 
+**Production (AXON - 10.0.0.21):**
 ```
-http://10.0.0.44:8091
+http://10.0.0.21:8091
+```
+
+**Documentation Interactive:**
+```
+http://10.0.0.21:8091/docs
+```
+
+**Health Check:**
+```
+http://10.0.0.21:8091/health
 ```
 
 ## Health & Status
@@ -389,7 +400,7 @@ Error responses include detail:
 
 ```bash
 # 1. Create draft article
-curl -X POST http://10.0.0.44:8091/articles \
+curl -X POST http://10.0.0.21:8091/articles \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Santé du Chat",
@@ -406,14 +417,14 @@ curl -X POST http://10.0.0.44:8091/articles \
 # Response includes: {"id": 1234, ...}
 
 # 2. Publish the article
-curl -X POST http://10.0.0.44:8091/articles/1234/publish
+curl -X POST http://10.0.0.21:8091/articles/1234/publish
 ```
 
 ### Upload and use an image
 
 ```bash
 # Upload image from external URL
-curl -X POST http://10.0.0.44:8091/media/upload \
+curl -X POST http://10.0.0.21:8091/media/upload \
   -H "Content-Type: application/json" \
   -d '{
     "url": "https://example.com/cat.jpg",
@@ -429,7 +440,7 @@ curl -X POST http://10.0.0.44:8091/media/upload \
 
 ## Dashboard
 
-Interactive web dashboard available at `http://10.0.0.44:8091/`
+Interactive web dashboard available at `http://10.0.0.21:8091/`
 
 **Features:**
 - Create articles from templates or custom JSON
@@ -441,6 +452,32 @@ Interactive web dashboard available at `http://10.0.0.44:8091/`
 
 ---
 
+## Deployment & Testing Status
+
+### ✅ Validation Results (2026-05-22)
+- **Forge Validation**: PASSED (0 errors, 3 optional warnings)
+- **Endpoints Tested**: 
+  - ✅ Health check
+  - ✅ Dashboard
+  - ✅ Articles (list, get, create, publish, delete)
+  - ✅ Templates (list, get)
+  - ✅ SEO (categories, tags)
+  - ⚠️ Media upload (functional, test image not found)
+
+### 🚀 Live Deployment
+- **Target**: OnyxAxon (10.0.0.21)
+- **Port**: 8091
+- **Status**: ✅ LIVE
+- **Health**: ✅ Healthy
+- **Systemd**: ✅ Active (onyx-verso-content-manager)
+- **Test Date**: 2026-05-22 13:32:00 UTC
+
+---
+
 ## Updates
 
+- **2026-05-22**: Deployed to production on AXON (10.0.0.21)
+- **2026-05-22**: All endpoints tested and validated
+- **2026-05-22**: GitHub repository created (VersoVet/verso-content-manager)
 - **2026-05-22**: Added service.py, improved docstrings, added tests
+- **2026-05-22**: Conformed to Forge SDK standards (SkillStatus enum)

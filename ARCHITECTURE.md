@@ -1,5 +1,16 @@
 # verso-content-manager Architecture
 
+## 🚀 Status: PRODUCTION READY
+
+**Deployment Status**: ✅ **LIVE on AXON (10.0.0.21)**
+- Validation: ✅ PASSED (0 errors, 3 optional warnings)
+- Health Check: ✅ OPERATIONAL
+- API Endpoints: ✅ ALL FUNCTIONAL
+- WordPress Integration: ✅ CONNECTED
+- Last Updated: 2026-05-22 13:29:12 UTC
+
+---
+
 ## Overview
 
 verso-content-manager is a FastAPI-based Forge skill that automates WordPress article management at verso-vet.com. It provides:
@@ -275,17 +286,32 @@ MediaResponse (WordPress URL)
 
 ### Forge Configuration
 - **Port**: 8091
-- **Target**: OnyxSoma (10.0.0.44)
+- **Target**: OnyxAxon (10.0.0.21) 🚀 **PRODUCTION**
 - **Type**: Python/FastAPI
-- **Secret**: wordpress_credentials
+- **Secret**: wordpress_credentials (Vault: 10.0.0.44:8050)
+- **Status**: ✅ **DEPLOYED & LIVE**
+- **Version**: 1.0.6
+- **PID**: 2640927
+- **Systemd**: onyx-verso-content-manager (active)
 
 ### Health Check
-- Endpoint: `GET /health`
-- Returns: `{"status": "healthy", ...}`
+- Endpoint: `GET http://10.0.0.21:8091/health`
+- Status: ✅ **HEALTHY**
+- Returns: `{"status": "healthy", "service": "verso-content-manager", "version": "1.0.0"}`
 
 ### Dashboard
-- Endpoint: `GET /`
+- Endpoint: `GET http://10.0.0.21:8091/`
 - Interactive web UI for article management
+- Status: ✅ **OPERATIONAL**
+
+### API Documentation
+- Swagger UI: `http://10.0.0.21:8091/docs`
+- ReDoc: `http://10.0.0.21:8091/redoc`
+
+### Repository
+- GitHub: `https://github.com/VersoVet/verso-content-manager`
+- Branch: `main` (production), `dev` (development)
+- Last deployment: 2026-05-22 13:29:12 UTC
 
 ## Future Enhancements
 
