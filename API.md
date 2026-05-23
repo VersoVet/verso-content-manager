@@ -241,6 +241,129 @@ Upload media from external URL to WordPress library with automatic optimization.
 
 ---
 
+## Content Publishing (article-writer integration)
+
+### POST /content/publish
+
+Publish WrittenContent from article-writer skill to WordPress.
+
+Accepts structured article output (WrittenContent JSON) with:
+- Sections in Markdown format
+- Images hosted on Dropbox
+- Bibliography from Zotero
+- Profile-based categorization
+
+Automatically:
+- Downloads and optimizes images (WebP conversion)
+- Converts Markdown sections to HTML
+- Removes citation markers
+- Publishes to verso-vet.com
+
+**Request:**
+```json
+{
+  "content": {
+    "id": "art-2024-001",
+    "package_id": "pkg-2024-001",
+    "profile_name": "article_specialistes",
+    "context": {
+      "objective": "Diabetes in Cats",
+      "target_audience": "Veterinary Specialists",
+      "word_count_target": 2500,
+      "language": "fr"
+    },
+    "sections": [
+      {
+        "id": "sec-1",
+        "title": "Clinical Presentation",
+        "content": "# Symptoms\n\nCats show [CITE:Smith2023]...",
+        "word_count": 350,
+        "references_used": ["Smith2023"],
+        "selected_images": ["img-key-1"]
+      }
+    ],
+    "selected_images": [
+      {
+        "zotero_key": "zotero-1",
+        "attachment_key": "img-key-1",
+        "dropbox_url": "https://www.dropbox.com/s/xyz/image.jpg?dl=0",
+        "caption": "Diabetic cat",
+        "placement_section": "sec-1"
+      }
+    ],
+    "bibliography": [
+      {
+        "zotero_key": "Smith2023",
+        "formatted": "Smith J. et al. (2023) Feline Diabetes. Vet Journal."
+      }
+    ],
+    "metadata": {
+      "total_words": 2450,
+      "total_images": 1,
+      "profile_used": "article_specialistes",
+      "generation_time_ms": 5420.0
+    }
+  },
+  "status": "draft",
+  "preview_only": false
+}
+```
+
+**Response (Success - Published):**
+```json
+{
+  "post_id": 5678,
+  "url": "https://verso-vet.com/?p=5678",
+  "status": "draft",
+  "featured_image_url": "https://verso-vet.com/wp-content/uploads/2025/02/image.webp",
+  "edit_url": "https://verso-vet.com/wp-admin/post.php?post=5678&action=edit",
+  "error_message": null,
+  "preview_html": null
+}
+```
+
+**Response (Preview Mode):**
+```json
+{
+  "post_id": null,
+  "url": null,
+  "status": "preview",
+  "featured_image_url": null,
+  "edit_url": null,
+  "error_message": null,
+  "preview_html": "<h2>Clinical Presentation</h2>...[HTML content]..."
+}
+```
+
+**Query Parameters:**
+- `status` (string, default: "draft"): Final article status (draft, publish)
+- `preview_only` (boolean, default: false): If true, returns HTML preview without publishing
+
+**Status Codes:**
+- `200`: Article published or preview generated
+- `500`: Server error (article may be saved as draft)
+
+**Features:**
+- Automatic Dropbox image download (API + fallback dl=1)
+- WebP image optimization
+- Markdown to HTML conversion
+- Citation marker removal
+- Profile-to-category mapping
+- Image injection by section
+- Bibliography formatting
+- Fallback to draft on publish failure
+
+**Profile Category Mapping:**
+| Profile | Category |
+|---------|----------|
+| `article_specialistes` | Spécialistes |
+| `article_praticiens` | Praticiens |
+| `fiche_info_proprietaire` | Propriétaires |
+| `synthese_formation` | Formation |
+| `livre_complet` | Livres |
+
+---
+
 ## SEO & Taxonomy
 
 ### GET /seo/categories

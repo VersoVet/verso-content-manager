@@ -81,12 +81,20 @@ verso-content-manager/
 │       │   └── tests/
 │       │       └── test_seo.py
 │       │
-│       └── templates/           # Template service
+│       ├── templates/           # Template service
+│       │   ├── __init__.py
+│       │   ├── service.py       # Template file loading
+│       │   ├── routes.py        # FastAPI routes
+│       │   └── tests/
+│       │       └── test_templates.py
+│       │
+│       └── content/             # Content publishing (article-writer)
 │           ├── __init__.py
-│           ├── service.py       # Template file loading
+│           ├── dropbox.py       # Dropbox image download
+│           ├── service.py       # Publishing orchestration
 │           ├── routes.py        # FastAPI routes
 │           └── tests/
-│               └── test_templates.py
+│               └── test_content.py
 │
 └── tests/
     ├── __init__.py
@@ -183,7 +191,26 @@ Template file management:
 - List available templates
 - JSON validation and error handling
 
-### 12. FastAPI Application (src/main.py)
+### 12. Dropbox Image Download (src/modules/content/dropbox.py)
+
+Image download from Dropbox:
+- Dropbox API with Bearer token from Vault
+- Fallback to direct URL with `dl=1` parameter
+- Async HTTP client (httpx)
+- Error logging and retry fallback
+
+### 13. Content Publishing Service (src/modules/content/service.py)
+
+Orchestrates WrittenContent publishing pipeline:
+- `publish_written_content()`: Main orchestration function
+- Image download, optimization, and upload
+- Markdown to HTML conversion
+- Citation marker removal
+- Profile-to-category mapping
+- Bibliography formatting
+- Fallback to draft on publish failure
+
+### 14. FastAPI Application (src/main.py)
 
 - Main app initialization with lifespan management
 - Dashboard HTML with interactive UI
@@ -225,6 +252,36 @@ External URL
 MediaResponse (WordPress URL)
 ```
 
+### WrittenContent Publishing Flow
+
+```
+article-writer Output (WrittenContent JSON)
+    ↓
+[POST /content/publish]
+    ↓
+[Dropbox Image Download]
+    ↓
+[Dropbox API / Fallback dl=1]
+    ↓
+[Media Optimizer: WebP conversion]
+    ↓
+[Media Uploader: WordPress media library]
+    ↓
+[Markdown → HTML Conversion]
+    ↓
+[Citation Marker Removal]
+    ↓
+[Image Injection by Section]
+    ↓
+[Bibliography Formatting]
+    ↓
+[Article Service: Create Post]
+    ↓
+[WordPress REST API]
+    ↓
+PublishResponse (post_id, url, edit_url, status)
+```
+
 ## Security Considerations
 
 ### Authentication
@@ -259,6 +316,7 @@ MediaResponse (WordPress URL)
 | httpx | ≥0.25.0 | Async HTTP client |
 | pydantic | ≥2.0.0 | Data validation |
 | Pillow | ≥10.0.0 | Image optimization |
+| markdown | ≥3.5.0 | Markdown to HTML conversion |
 | python-multipart | ≥0.0.6 | Form data parsing |
 | onyx-sdk | ≥0.1.0 | Forge integration |
 

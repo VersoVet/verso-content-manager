@@ -133,3 +133,86 @@ class MediaResponse(BaseModel):
     wp_url: str
     filename: str
     size: int
+
+
+# WrittenContent Models (article-writer integration)
+
+
+class RedactionContext(BaseModel):
+    """Redaction context for article generation."""
+
+    objective: str
+    target_audience: str
+    word_count_target: int = 2000
+    language: str = "fr"
+    specific_instructions: str | None = None
+
+
+class WrittenSection(BaseModel):
+    """Section of written content."""
+
+    id: str
+    title: str
+    content: str  # Markdown with [CITE:zotero_key] markers
+    word_count: int
+    references_used: list[str] = Field(default_factory=list)
+    selected_images: list[str] = Field(default_factory=list)  # attachment_keys
+
+
+class SelectedImage(BaseModel):
+    """Selected image for article."""
+
+    zotero_key: str
+    attachment_key: str
+    dropbox_url: str
+    caption: str
+    placement_section: str  # Target section ID
+
+
+class BibliographyEntry(BaseModel):
+    """Bibliography entry."""
+
+    zotero_key: str
+    formatted: str
+
+
+class WrittenContentMetadata(BaseModel):
+    """Metadata for written content."""
+
+    total_words: int
+    total_images: int
+    profile_used: str
+    generation_time_ms: float
+
+
+class WrittenContent(BaseModel):
+    """Complete written content from article-writer."""
+
+    id: str
+    package_id: str
+    profile_name: str
+    context: RedactionContext
+    sections: list[WrittenSection]
+    selected_images: list[SelectedImage]
+    bibliography: list[BibliographyEntry]
+    metadata: WrittenContentMetadata
+
+
+class PublishRequest(BaseModel):
+    """Request to publish WrittenContent to WordPress."""
+
+    content: WrittenContent
+    status: Literal["draft", "publish"] = "draft"
+    preview_only: bool = False
+
+
+class PublishResponse(BaseModel):
+    """Response from content publishing."""
+
+    post_id: int | None = None
+    url: str | None = None
+    status: str
+    featured_image_url: str | None = None
+    edit_url: str | None = None
+    error_message: str | None = None
+    preview_html: str | None = None

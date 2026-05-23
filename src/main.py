@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse
 from src.config import PORT, SERVICE_NAME
 from src.dashboard import DASHBOARD_HTML
 from src.modules.articles.routes import router as articles_router
+from src.modules.content.routes import router as content_router
 from src.modules.media.routes import router as media_router
 from src.modules.seo.routes import router as seo_router
 from src.modules.templates.routes import router as templates_router
@@ -78,6 +79,7 @@ app = FastAPI(
 
 # Include routers
 app.include_router(articles_router)
+app.include_router(content_router)
 app.include_router(media_router)
 app.include_router(seo_router)
 app.include_router(templates_router)

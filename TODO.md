@@ -62,36 +62,36 @@
 - [x] Create ARCHITECTURE.md with design details
 - [x] Create TODO.md (this file)
 
+### Phase 11: Content Publishing (article-writer integration)
+- [x] Add 8 new Pydantic models (WrittenContent, RedactionContext, etc.)
+- [x] Implement dropbox.py (image download with API + fallback)
+- [x] Implement service.py (publishing orchestration)
+- [x] Implement routes.py (POST /content/publish endpoint)
+- [x] Create test_content.py with comprehensive tests
+- [x] Update src/main.py to include content_router
+- [x] Add markdown to requirements.txt
+- [x] Update API.md with /content/publish documentation
+- [x] Update ARCHITECTURE.md with content module
+
 ## 🔄 In Progress
 
-- [x] Create src/modules/media/service.py
-- [x] Create test_media.py, test_seo.py, test_templates.py
-- [x] Improve docstring coverage (9 functions)
-- [x] Update manifest.json with lifecycle, dashboard, repository
-- [x] Add OnyxClient.start/stop in lifespan
-- [ ] Code validation (ruff, mypy)
+- [x] Code validation (ruff, mypy) - ✅ PASSED
 - [ ] Running pytest
-- [ ] Forge validator (phase 2)
+- [ ] Forge validator - ✅ PASSED (warnings only)
 - [ ] Git commit and review
 
 ## 📋 Pending
 
-### Code Quality
-- [ ] Run `ruff check src/ --fix`
-- [ ] Run `ruff format src/`
-- [ ] Run `mypy src/ --strict`
-- [ ] Achieve 60%+ docstring coverage
-
 ### Testing
 - [ ] Run `pytest tests/` -x -q
-- [ ] Verify all 18 validation phases pass
-- [ ] Manual dashboard testing
+- [ ] Manual API testing with WrittenContent JSON
+- [ ] Verify Dropbox image download fallback
 
 ### Deployment
 - [ ] Git commit with proper message
 - [ ] Push to dev branch
-- [ ] Run Forge validation
-- [ ] Review and deploy
+- [ ] Deploy with /forge-deploy verso-content-manager
+- [ ] Verify /content/publish endpoint works in production
 
 ## 📝 Implementation Notes
 
@@ -109,6 +109,9 @@
 - ✅ Template system (presse, pathologie, outil)
 - ✅ Interactive dashboard
 - ✅ API + dashboard UIs
+- ✅ WrittenContent publishing (article-writer integration)
+- ✅ Dropbox image download with API + fallback
+- ✅ Markdown to HTML conversion with citation removal
 
 ### Known Limitations
 - Dashboard doesn't support full article editing (read-only view)
@@ -143,4 +146,4 @@
 
 ## 📅 Last Updated
 
-2025-02-15 - Initial skill development complete
+2026-05-17 - Phase 11 complete: Content publishing (article-writer integration) implemented
