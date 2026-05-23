@@ -6,7 +6,7 @@ from pathlib import Path
 # API Configuration
 PORT: int = int(os.getenv("PORT", "8091"))
 SERVICE_NAME: str = "verso-content-manager"
-VERSION: str = "1.0.0"
+VERSION: str = "1.0.7"
 
 # WordPress Configuration
 WP_URL: str = "https://verso-vet.com/wp-json"

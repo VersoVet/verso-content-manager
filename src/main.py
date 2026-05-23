@@ -7,7 +7,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-from src.config import PORT, SERVICE_NAME
+from src.config import PORT, SERVICE_NAME, VERSION
 from src.dashboard import DASHBOARD_HTML
 from src.modules.articles.routes import router as articles_router
 from src.modules.content.routes import router as content_router
@@ -105,7 +105,7 @@ async def health() -> dict[str, str]:
     return {
         "status": "healthy",
         "service": SERVICE_NAME,
-        "version": "1.0.0",
+        "version": VERSION,
     }
 
 
