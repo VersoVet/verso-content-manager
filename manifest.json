@@ -1,6 +1,6 @@
 {
   "name": "verso-content-manager",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "core": {
     "name": "verso-content-manager",
     "type": "python",
