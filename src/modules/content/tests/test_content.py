@@ -43,9 +43,7 @@ async def test_publish_content_preview(mocker: Any) -> None:
             )
         ],
         selected_images=[],
-        bibliography=[
-            BibliographyEntry(zotero_key="key1", formatted="Author et al. (2024)")
-        ],
+        bibliography=[BibliographyEntry(zotero_key="key1", formatted="Author et al. (2024)")],
         metadata=WrittenContentMetadata(
             total_words=100,
             total_images=0,
@@ -133,12 +131,8 @@ def test_format_bibliography() -> None:
     from src.modules.content.service import _format_bibliography
 
     entries = [
-        BibliographyEntry(
-            zotero_key="key1", formatted="Author A (2024) Title. Journal."
-        ),
-        BibliographyEntry(
-            zotero_key="key2", formatted="Author B (2023) Other. Magazine."
-        ),
+        BibliographyEntry(zotero_key="key1", formatted="Author A (2024) Title. Journal."),
+        BibliographyEntry(zotero_key="key2", formatted="Author B (2023) Other. Magazine."),
     ]
 
     html = _format_bibliography(entries)
@@ -178,9 +172,7 @@ def test_build_html_content() -> None:
         ),
     ]
 
-    bibliography = [
-        BibliographyEntry(zotero_key="key1", formatted="Source (2024)")
-    ]
+    bibliography = [BibliographyEntry(zotero_key="key1", formatted="Source (2024)")]
 
     media_map = {
         "img-1": MediaResponse(

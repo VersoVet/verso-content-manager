@@ -216,3 +216,51 @@ class PublishResponse(BaseModel):
     edit_url: str | None = None
     error_message: str | None = None
     preview_html: str | None = None
+
+
+# Verso-formatted article models (from article-writer verso_formatter)
+
+
+class VersoSectionImage(BaseModel):
+    """Image placed in a section."""
+
+    attachment_key: str
+    dropbox_url: str
+    caption: str
+
+
+class VersoSection(BaseModel):
+    """Section with normalized heading levels."""
+
+    id: str
+    title: str
+    content: str  # Markdown with shifted headings, no CITE markers
+    images: list[VersoSectionImage] = Field(default_factory=list)
+
+
+class VersoBibliographyEntry(BaseModel):
+    """Bibliography entry."""
+
+    zotero_key: str
+    formatted: str
+
+
+class VersoMetadata(BaseModel):
+    """Metadata from article-writer."""
+
+    total_words: int
+    profile_used: str
+    source_content_id: str
+    source_package_id: str
+
+
+class VersoArticleRequest(BaseModel):
+    """Structured article from article-writer verso formatter."""
+
+    title: str
+    excerpt: str = ""
+    category: str = "Actualité"
+    status: Literal["draft", "publish"] = "draft"
+    sections: list[VersoSection]
+    bibliography: list[VersoBibliographyEntry] = Field(default_factory=list)
+    metadata: VersoMetadata

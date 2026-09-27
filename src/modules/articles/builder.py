@@ -1,6 +1,7 @@
 """Convert JSON blocks to HTML styled for Verso Vet."""
 
 import logging
+from html import escape
 from typing import Any
 
 from src.config import COLOR_ACCENT, COLOR_PRIMARY
@@ -53,8 +54,8 @@ def _build_hero(block: dict[str, Any]) -> str:
     Returns:
         HTML string for hero section.
     """
-    text = block.get("text", "")
-    image = block.get("image_url", "")
+    text = escape(block.get("text", ""))
+    image = escape(block.get("image_url", ""), quote=True)
 
     html = f'<div style="background: {COLOR_PRIMARY}; color: white; padding: 80px 30px; text-align: center;">'
 
@@ -77,12 +78,13 @@ def _build_text(block: dict[str, Any]) -> str:
         HTML string for text section.
     """
     heading = block.get("heading")
-    content = block.get("content", "")
+    content = block.get("content", "")  # HTML content (trusted source)
 
     html = '<div style="padding: 30px; line-height: 1.8;">'
 
     if heading:
-        html += f'<h2 style="font-size: 28px; color: {COLOR_PRIMARY}; font-weight: 700; margin-bottom: 20px;">{heading}</h2>'
+        safe_heading = escape(heading)
+        html += f'<h2 style="font-size: 28px; color: {COLOR_PRIMARY}; font-weight: 700; margin-bottom: 20px;">{safe_heading}</h2>'
 
     html += f'<div style="font-size: 16px; color: #333;">{content}</div>'
     html += "</div>"
@@ -99,9 +101,9 @@ def _build_image(block: dict[str, Any]) -> str:
     Returns:
         HTML string for image section.
     """
-    url = block.get("url", "")
-    alt = block.get("alt", "Image")
-    caption = block.get("caption", "")
+    url = escape(block.get("url", ""), quote=True)
+    alt = escape(block.get("alt", "Image"), quote=True)
+    caption = escape(block.get("caption", ""))
 
     html = '<div style="text-align: center; padding: 30px;">'
     html += f'<figure><img src="{url}" alt="{alt}" style="max-width: 100%; height: auto; border-radius: 8px;"/>'
@@ -174,7 +176,7 @@ def _build_list(block: dict[str, Any]) -> str:
     html += '<ul style="font-size: 16px; line-height: 1.8; margin-left: 20px;">'
 
     for item in items:
-        html += f'<li style="margin-bottom: 10px;">{item}</li>'
+        html += f'<li style="margin-bottom: 10px;">{escape(str(item))}</li>'
 
     html += "</ul></div>"
 
@@ -220,8 +222,8 @@ def _build_cta(block: dict[str, Any]) -> str:
     Returns:
         HTML string for CTA button.
     """
-    text = block.get("text", "Cliquer")
-    url = block.get("url", "/")
+    text = escape(block.get("text", "Cliquer"))
+    url = escape(block.get("url", "/"), quote=True)
 
     html = f'<div style="padding: 50px 30px; text-align: center;"><a href="{url}" style="display: inline-block; background: {COLOR_PRIMARY}; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: 700; font-size: 16px;">{text}</a></div>'
 
@@ -237,8 +239,8 @@ def _build_quote(block: dict[str, Any]) -> str:
     Returns:
         HTML string for blockquote.
     """
-    text = block.get("text", "")
-    author = block.get("author", "")
+    text = escape(block.get("text", ""))
+    author = escape(block.get("author", ""))
 
     html = f'<div style="border-left: 4px solid {COLOR_ACCENT}; padding: 30px; background: #f9f9f9; margin: 30px;">'
     html += f'<blockquote style="font-size: 18px; font-style: italic; color: #333; margin: 0;">{text}</blockquote>'

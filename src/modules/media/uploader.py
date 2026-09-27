@@ -8,9 +8,7 @@ from src.models import MediaResponse
 logger = logging.getLogger(__name__)
 
 
-async def upload_media(
-    filename: str, content: bytes, alt_text: str = "", title: str | None = None
-) -> MediaResponse:
+async def upload_media(filename: str, content: bytes, alt_text: str = "", title: str | None = None) -> MediaResponse:
     """Upload media to WordPress library.
 
     Args:

@@ -1,5 +1,6 @@
 """WordPress article management service."""
 
+import asyncio
 import logging
 from typing import Any
 
@@ -7,6 +8,8 @@ from src.core.wp_client import wp_delete, wp_get, wp_patch, wp_post
 from src.models import ArticleResponse
 
 logger = logging.getLogger(__name__)
+
+VALID_STATUSES = {"draft", "publish", "pending", "private", "future"}
 
 
 async def create_article(
@@ -32,12 +35,17 @@ async def create_article(
     Returns:
         ArticleResponse with created article data.
     """
+    if status not in VALID_STATUSES:
+        raise ValueError(f"Invalid status '{status}'. Must be one of: {VALID_STATUSES}")
+
     categories = categories or []
     tags = tags or []
 
-    # Convert category/tag names to IDs
-    category_ids = await _get_category_ids(categories)
-    tag_ids = await _get_tag_ids(tags)
+    # Convert category/tag names to IDs in parallel
+    category_ids, tag_ids = await asyncio.gather(
+        _get_category_ids(categories),
+        _get_tag_ids(tags),
+    )
 
     data = {
         "title": title,
@@ -90,21 +98,23 @@ async def update_article(
     Returns:
         ArticleResponse with updated article data.
     """
-    data = {}
+    data: dict[str, Any] = {}
 
-    if title:
+    if title is not None:
         data["title"] = title
-    if content:
+    if content is not None:
         data["content"] = content
-    if excerpt:
+    if excerpt is not None:
         data["excerpt"] = excerpt
-    if status:
+    if status is not None:
+        if status not in VALID_STATUSES:
+            raise ValueError(f"Invalid status '{status}'. Must be one of: {VALID_STATUSES}")
         data["status"] = status
 
-    if categories:
-        data["categories"] = await _get_category_ids(categories)  # type: ignore[assignment]
-    if tags:
-        data["tags"] = await _get_tag_ids(tags)  # type: ignore[assignment]
+    if categories is not None:
+        data["categories"] = await _get_category_ids(categories)
+    if tags is not None:
+        data["tags"] = await _get_tag_ids(tags)
 
     resp = await wp_patch(f"/wp/v2/posts/{post_id}", json_data=data)
 

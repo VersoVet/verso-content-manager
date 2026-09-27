@@ -17,6 +17,7 @@ from src.modules.templates.routes import router as templates_router
 
 try:
     from onyx_sdk import OnyxClient, SkillStatus  # type: ignore[import-untyped]
+
     SDK_AVAILABLE = True
 except ImportError:
     SDK_AVAILABLE = False

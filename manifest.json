@@ -8,7 +8,7 @@
     "description": "Content management system for verso-vet.com articles via WordPress REST API",
     "brain_area": "cerebellum",
     "routing": {
-      "port": 8091
+      "port": 8090
     }
   },
   "forge": {

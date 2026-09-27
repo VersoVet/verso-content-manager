@@ -28,6 +28,7 @@ def _get_onyx_client() -> Any:
     """
     try:
         from src.main import _onyx_client  # type: ignore[import]
+
         return _onyx_client
     except ImportError:
         return None
@@ -47,6 +48,7 @@ async def create_article_endpoint(request: ArticleRequest) -> ArticleResponse:
     if onyx:
         try:
             from onyx_sdk import SkillStatus  # type: ignore[import-untyped]
+
             onyx.status(SkillStatus.WORKING, "Creating article...")
         except ImportError:
             pass
@@ -73,9 +75,7 @@ async def create_article_endpoint(request: ArticleRequest) -> ArticleResponse:
 
 
 @router.get("", response_model=list[dict[str, Any]])
-async def list_articles_endpoint(
-    status: str = "publish", limit: int = 10, search: str = ""
-) -> list[dict[str, Any]]:
+async def list_articles_endpoint(status: str = "publish", limit: int = 10, search: str = "") -> list[dict[str, Any]]:
     """List articles with optional filtering.
 
     Args:

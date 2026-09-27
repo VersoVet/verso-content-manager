@@ -22,13 +22,15 @@ async def get_secret(key: str) -> str:
     """
     import os
 
+    from src.config import VAULT_URL
+
     token = os.getenv("ONYX_VAULT_TOKEN", "")
     if not token:
         raise ValueError("ONYX_VAULT_TOKEN not set")
 
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"http://10.0.0.44:8050/vault/{key}",
+            f"{VAULT_URL}/{key}",
             headers={"X-Vault-Token": token},
             timeout=10.0,
         )
@@ -58,8 +60,7 @@ async def download_dropbox_image(dropbox_url: str) -> bytes:
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 "https://content.dropboxapi.com/2/sharing/get_shared_link_file",
-                headers=headers
-                | {"Dropbox-API-Arg": f'{{"url": "{dropbox_url}"}}'},
+                headers=headers | {"Dropbox-API-Arg": f'{{"url": "{dropbox_url}"}}'},
                 timeout=30.0,
             )
             response.raise_for_status()

@@ -1,0 +1,25 @@
+# Configuration verso-content-manager
+# Endpoints des services utilises
+endpoints:
+  wordpress: https://verso-vet.com/wp-json
+  vault: http://10.0.0.44:8050/vault
+
+# Parametres du skill
+settings:
+  port: 8090
+  wp_timeout: 20.0
+  log_level: INFO
+
+# Optimisation images
+images:
+  max_width: 1200
+  max_height: 1200
+  column_max_width: 600
+  column_max_height: 400
+  webp_quality: 85
+  format: WebP
+
+# Design Verso Vet
+design:
+  color_primary: "#1c2445"
+  color_accent: "#e74c3c"

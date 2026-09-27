@@ -3,17 +3,24 @@
 import os
 from pathlib import Path
 
+import yaml
+
+# Load YAML config
+_CONFIG_PATH = Path(__file__).parent.parent / "config" / "verso-content-manager.yaml"
+with open(_CONFIG_PATH) as _f:
+    CONFIG: dict = yaml.safe_load(_f)
+
 # API Configuration
-PORT: int = int(os.getenv("PORT", "8091"))
+PORT: int = int(os.getenv("PORT", str(CONFIG["settings"]["port"])))
 SERVICE_NAME: str = "verso-content-manager"
-VERSION: str = "1.0.12"
+VERSION: str = "1.0.13"
 
 # WordPress Configuration
-WP_URL: str = "https://verso-vet.com/wp-json"
-WP_TIMEOUT: float = 20.0
+WP_URL: str = CONFIG["endpoints"]["wordpress"]
+WP_TIMEOUT: float = CONFIG["settings"]["wp_timeout"]
 
 # Vault Configuration
-VAULT_URL: str = os.getenv("VAULT_URL", "http://10.0.0.44:8050/vault")
+VAULT_URL: str = os.getenv("VAULT_URL", CONFIG["endpoints"]["vault"])
 VAULT_TOKEN: str = os.getenv("ONYX_VAULT_TOKEN", "")
 
 # Skill Directories
@@ -21,13 +28,13 @@ SKILL_DIR: Path = Path(__file__).parent.parent
 TEMPLATES_DIR: Path = SKILL_DIR / "templates"
 
 # Image Optimization
-IMAGE_MAX_WIDTH: int = 1200
-IMAGE_MAX_HEIGHT: int = 1200
-IMAGE_COLUMN_MAX_WIDTH: int = 600
-IMAGE_COLUMN_MAX_HEIGHT: int = 400
-WEBP_QUALITY: int = 85
-IMAGE_FORMAT: str = "WebP"
+IMAGE_MAX_WIDTH: int = CONFIG["images"]["max_width"]
+IMAGE_MAX_HEIGHT: int = CONFIG["images"]["max_height"]
+IMAGE_COLUMN_MAX_WIDTH: int = CONFIG["images"]["column_max_width"]
+IMAGE_COLUMN_MAX_HEIGHT: int = CONFIG["images"]["column_max_height"]
+WEBP_QUALITY: int = CONFIG["images"]["webp_quality"]
+IMAGE_FORMAT: str = CONFIG["images"]["format"]
 
 # Verso Vet Design Colors
-COLOR_PRIMARY: str = "#1c2445"
-COLOR_ACCENT: str = "#e74c3c"
+COLOR_PRIMARY: str = CONFIG["design"]["color_primary"]
+COLOR_ACCENT: str = CONFIG["design"]["color_accent"]
