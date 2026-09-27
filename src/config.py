@@ -13,7 +13,12 @@ with open(_CONFIG_PATH) as _f:
 # API Configuration
 PORT: int = int(os.getenv("PORT", str(CONFIG["settings"]["port"])))
 SERVICE_NAME: str = "verso-content-manager"
-VERSION: str = "1.0.14"
+# Read version from manifest.json to stay in sync with Forge deploys
+_MANIFEST_PATH = Path(__file__).parent.parent / "manifest.json"
+with open(_MANIFEST_PATH) as _mf:
+    import json as _json
+
+    VERSION: str = _json.load(_mf).get("version", "0.0.0")
 
 # WordPress Configuration
 WP_URL: str = CONFIG["endpoints"]["wordpress"]
