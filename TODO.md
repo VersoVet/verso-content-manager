@@ -1,149 +1,84 @@
 # verso-content-manager TODO
 
-## ✅ Completed
+## Completed
 
-### Phase 1: Foundation
-- [x] Create project structure
-- [x] Create manifest.json with correct configuration
-- [x] Create requirements.txt with all dependencies
-- [x] Create .gitignore
-- [x] Create CLAUDE.md (auto-generated)
-
-### Phase 2: Core Infrastructure
-- [x] Configure config.py with all constants
-- [x] Implement vault.py for secret management
-- [x] Implement wp_client.py with WordPress REST API client
-- [x] Fix HTTP/1.1 + Pragma headers for Cloudflare bypass
-
-### Phase 3: Models & Validation
-- [x] Define Pydantic models for all block types
-- [x] Define ArticleRequest and ArticleResponse
-- [x] Define MediaUploadRequest and MediaResponse
-- [x] Type validation with Pydantic
-
-### Phase 4: Article Module
-- [x] Implement builder.py (blocks → HTML)
-- [x] Implement service.py (CRUD operations)
-- [x] Implement routes.py (FastAPI endpoints)
-- [x] Test all block types
-
-### Phase 5: Media Module
-- [x] Implement optimizer.py (Pillow image processing)
-- [x] Implement uploader.py (WordPress media upload)
-- [x] Implement routes.py (media endpoints)
-- [x] WebP conversion working
-
-### Phase 6: SEO Module
-- [x] Implement service.py (category/tag management)
-- [x] Implement routes.py (SEO endpoints)
-- [x] Name-to-ID conversion utilities
-
-### Phase 7: Templates Module
-- [x] Implement service.py (template loading)
-- [x] Implement routes.py (template endpoints)
-- [x] Create presse.json template
-- [x] Create pathologie.json template
-- [x] Create outil.json template
-
-### Phase 8: Main Application
-- [x] Create src/main.py with FastAPI app
-- [x] Implement dashboard HTML
-- [x] Implement health endpoint
-- [x] Include all module routers
-
-### Phase 9: Testing
-- [x] Create test_integration.py
-- [x] Create test_articles.py
-- [x] Create conftest.py with fixtures
-- [x] Test block builders
-
-### Phase 10: Documentation
-- [x] Create API.md with endpoint documentation
-- [x] Create ARCHITECTURE.md with design details
-- [x] Create TODO.md (this file)
+### Phase 1-10: Foundation to Documentation
+- [x] Project structure, manifest, requirements, .gitignore
+- [x] Core: config.py, vault.py, wp_client.py (HTTP/1.1 + Pragma)
+- [x] Models: Pydantic models for blocks, articles, media
+- [x] Articles: builder.py (blocks -> HTML), service.py (CRUD), routes.py
+- [x] Media: optimizer.py (WebP), uploader.py, routes.py
+- [x] SEO: categories/tags management
+- [x] Templates: presse, pathologie, outil
+- [x] Main app: FastAPI + dashboard + health
+- [x] Tests: integration + unit tests per module
+- [x] Docs: API.md, ARCHITECTURE.md
 
 ### Phase 11: Content Publishing (article-writer integration)
-- [x] Add 8 new Pydantic models (WrittenContent, RedactionContext, etc.)
-- [x] Implement dropbox.py (image download with API + fallback)
-- [x] Implement service.py (publishing orchestration)
-- [x] Implement routes.py (POST /content/publish endpoint)
-- [x] Create test_content.py with comprehensive tests
-- [x] Update src/main.py to include content_router
-- [x] Add markdown to requirements.txt
-- [x] Update API.md with /content/publish documentation
-- [x] Update ARCHITECTURE.md with content module
+- [x] WrittenContent models (RedactionContext, WrittenSection, etc.)
+- [x] Dropbox image download (API + fallback dl=1)
+- [x] Publishing orchestration service
+- [x] POST /content/publish endpoint
+- [x] Markdown to HTML conversion with citation removal
 
-## 🔄 In Progress
+### Phase 12: Pipeline alignment (2026-09-27)
+- [x] Fix heading hierarchy: h2 (section) -> h3 (sub) -> h4 (sub-sub)
+- [x] Fix XSS: html.escape() on all user content in builder.py
+- [x] Fix image captions resolution from SelectedImage objects
+- [x] Add VersoArticleRequest model for structured verso format
+- [x] Add POST /content/publish-verso endpoint
+- [x] Move URLs from hardcoded to config/verso-content-manager.yaml
+- [x] Add cron.json with daily-health-check
+- [x] Add DIAGRAM.md (auto-generated)
+- [x] Change port 8091 -> 8090 (conflict with onyx-ged)
+- [x] Version auto-sync from manifest.json
+- [x] Validate article status before WordPress API calls
+- [x] asyncio.gather for parallel category/tag resolution
+- [x] Update dashboard with article-writer integration panel
+- [x] Update tests for new service signatures
 
-- [x] Code validation (ruff, mypy) - ✅ PASSED
-- [ ] Running pytest
-- [ ] Forge validator - ✅ PASSED (warnings only)
-- [ ] Git commit and review
+### article-writer side (2026-09-27)
+- [x] Add src/verso_formatter.py (heading shift, excerpt, category mapping)
+- [x] Add GET /write/contents/{id}/verso endpoint
+- [x] Update API.md and ARCHITECTURE.md
 
-## 📋 Pending
+## In Progress
+
+(none)
+
+## Pending
 
 ### Testing
-- [ ] Run `pytest tests/` -x -q
-- [ ] Manual API testing with WrittenContent JSON
-- [ ] Verify Dropbox image download fallback
+- [ ] End-to-end test with real article-writer content (Zotero + images)
+- [ ] Verify Dropbox image download + WebP optimization in production
+- [ ] Load testing with large articles (10+ sections, multiple images)
 
-### Deployment
-- [ ] Git commit with proper message
-- [ ] Push to dev branch
-- [ ] Deploy with /forge-deploy verso-content-manager
-- [ ] Verify /content/publish endpoint works in production
+### Future Enhancements
+- [ ] Article scheduling (future publication dates)
+- [ ] Media library browser in dashboard
+- [ ] Bulk operations (CSV/JSON import)
+- [ ] Article revision tracking
+- [ ] Live preview before publishing
 
-## 📝 Implementation Notes
+## Architecture Notes
 
-### Architecture Decisions
-1. **HTTP/1.1 + Pragma Headers**: Required to bypass Cloudflare caching issues with WordPress auth
-2. **WebP Format**: Reduces image sizes 30-50% while maintaining quality
-3. **Async Operations**: All I/O is async via httpx and FastAPI
-4. **Dashboard HTML**: Single-file embedded HTML + JavaScript for simplicity
-5. **Block-based Content**: Flexible, composable content structure
+### Heading Hierarchy
+- WordPress post title: h1 (theme-managed)
+- Section titles: h2
+- Sub-headings in content (## shifted to ###): h3
+- Sub-sub-headings (### shifted to ####): h4
 
-### Key Features
-- ✅ Article creation from JSON blocks
-- ✅ Image optimization and WebP conversion
-- ✅ Category and tag management
-- ✅ Template system (presse, pathologie, outil)
-- ✅ Interactive dashboard
-- ✅ API + dashboard UIs
-- ✅ WrittenContent publishing (article-writer integration)
-- ✅ Dropbox image download with API + fallback
-- ✅ Markdown to HTML conversion with citation removal
+### Pipeline
+```
+article-writer                    verso-content-manager              WordPress
+GET /write/contents/{id}/verso -> POST /content/publish-verso    -> verso-vet.com
+     (structured format)              (images + HTML + publish)      (draft/publish)
+```
 
-### Known Limitations
-- Dashboard doesn't support full article editing (read-only view)
-- No article scheduling/future publishing
-- No bulk operations
-- Templates are JSON files (not database)
+### Port
+- Production: 8090 on OnyxAxon (10.0.0.21)
+- Previously 8091 (now used by onyx-ged)
 
-### Security Considerations
-- ✅ Credentials via Vault (not hardcoded)
-- ✅ No credentials in environment variables
-- ✅ Input validation via Pydantic
-- ✅ No sensitive info in error responses
-- ✅ HTTPS for WordPress REST API
+## Last Updated
 
-## 🎯 Final Checklist
-
-- [ ] Code compiles without errors
-- [ ] All imports resolve correctly
-- [ ] Type checking passes (mypy)
-- [ ] Linting passes (ruff)
-- [ ] Tests pass (pytest)
-- [ ] Docstrings complete (80%+)
-- [ ] API.md fully documented
-- [ ] ARCHITECTURE.md complete
-- [ ] No credentials in code
-- [ ] .gitignore properly configured
-- [ ] manifest.json valid
-- [ ] Forge validator passes all 18 phases
-- [ ] Dashboard loads without errors
-- [ ] Health endpoint works
-- [ ] Ready for deployment
-
-## 📅 Last Updated
-
-2026-05-17 - Phase 11 complete: Content publishing (article-writer integration) implemented
+2026-09-27 - Phase 12: Pipeline alignment with article-writer

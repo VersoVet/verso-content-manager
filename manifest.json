@@ -34,7 +34,11 @@
     },
     "secrets": [
       "wordpress_credentials"
-    ]
+    ],
+    "resources": {
+      "memory_high": "512M",
+      "memory_max": "1G"
+    }
   },
   "dashboard": {
     "enabled": true,

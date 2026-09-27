@@ -54,8 +54,8 @@ def _build_hero(block: dict[str, Any]) -> str:
     Returns:
         HTML string for hero section.
     """
-    text = escape(block.get("text", ""))
-    image = escape(block.get("image_url", ""), quote=True)
+    text = escape(block.get("text", "") or "")
+    image = escape(block.get("image_url", "") or "", quote=True)
 
     html = f'<div style="background: {COLOR_PRIMARY}; color: white; padding: 80px 30px; text-align: center;">'
 

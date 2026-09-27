@@ -221,6 +221,69 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         .loading.active {
             display: block;
         }
+
+        .writer-section {
+            grid-column: 1 / -1;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 30px;
+        }
+
+        .writer-section .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .writer-section .input-row input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: "Monaco", "Menlo", monospace;
+        }
+
+        .writer-section .input-row input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .writer-preview {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .writer-preview h3 {
+            color: #1c2445;
+            margin-bottom: 10px;
+        }
+
+        .writer-preview .preview-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .writer-preview .preview-meta span {
+            background: #e8eaf6;
+            color: #3f51b5;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .writer-preview .preview-excerpt {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -270,6 +333,33 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             </div>
 
             <div id="listLoading" class="loading">⏳ Chargement...</div>
+        </div>
+
+        <!-- article-writer Integration -->
+        <div class="writer-section">
+            <div class="section-title">🔗 Publier depuis article-writer</div>
+
+            <div class="input-row">
+                <input type="text" id="writerContentId" placeholder="Content ID (ex: c9ff4e32-...)">
+                <button onclick="fetchVersoContent()">📥 Récupérer</button>
+            </div>
+
+            <div id="writerLoading" class="loading">⏳ Récupération depuis article-writer...</div>
+
+            <div id="writerPreview" class="writer-preview">
+                <h3 id="writerPreviewTitle"></h3>
+                <div class="preview-meta">
+                    <span id="writerPreviewCategory"></span>
+                    <span id="writerPreviewSections"></span>
+                </div>
+                <div class="preview-excerpt" id="writerPreviewExcerpt"></div>
+                <div style="margin-top: 15px;">
+                    <button onclick="publishVersoContent()" style="background: #4caf50;">📤 Publier en brouillon</button>
+                </div>
+            </div>
+
+            <div id="writerPublishLoading" class="loading">⏳ Publication en cours...</div>
+            <div id="writerResult" class="result"></div>
         </div>
     </div>
 
@@ -413,6 +503,98 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             const resultDiv = document.getElementById('createResult');
             resultDiv.className = `result ${type}`;
             resultDiv.innerHTML = message;
+        }
+
+        // === article-writer integration ===
+        const WRITER_BASE = 'http://10.0.0.21:8461';
+        let _versoContent = null;
+
+        async function fetchVersoContent() {
+            const contentId = document.getElementById('writerContentId').value.trim();
+            if (!contentId) {
+                alert('Veuillez entrer un Content ID');
+                return;
+            }
+
+            const loadingDiv = document.getElementById('writerLoading');
+            const previewDiv = document.getElementById('writerPreview');
+            const resultDiv = document.getElementById('writerResult');
+            previewDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+            loadingDiv.classList.add('active');
+            _versoContent = null;
+
+            try {
+                const response = await fetch(`${WRITER_BASE}/write/contents/${contentId}/verso`);
+                loadingDiv.classList.remove('active');
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `Erreur ${response.status}: ${err.detail || response.statusText}`;
+                    return;
+                }
+
+                const data = await response.json();
+                _versoContent = data;
+
+                document.getElementById('writerPreviewTitle').textContent = data.title || 'Sans titre';
+                document.getElementById('writerPreviewCategory').textContent = data.category || 'Sans catégorie';
+
+                const nbSections = Array.isArray(data.sections) ? data.sections.length : 0;
+                document.getElementById('writerPreviewSections').textContent = nbSections + ' section' + (nbSections > 1 ? 's' : '');
+
+                const excerpt = data.excerpt || data.meta_description || '';
+                document.getElementById('writerPreviewExcerpt').textContent = excerpt;
+
+                previewDiv.style.display = 'block';
+            } catch (error) {
+                loadingDiv.classList.remove('active');
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `Erreur: ${error.message}`;
+            }
+        }
+
+        async function publishVersoContent() {
+            if (!_versoContent) {
+                alert('Aucun contenu à publier. Récupérez d\\'abord un article.');
+                return;
+            }
+
+            const loadingDiv = document.getElementById('writerPublishLoading');
+            const resultDiv = document.getElementById('writerResult');
+            resultDiv.style.display = 'none';
+            loadingDiv.classList.add('active');
+
+            try {
+                const response = await fetch('/content/publish-verso', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(_versoContent)
+                });
+
+                const result = await response.json();
+                loadingDiv.classList.remove('active');
+
+                if (!response.ok) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `Erreur: ${result.detail || response.statusText}`;
+                    return;
+                }
+
+                const postId = result.id || result.post_id || '?';
+                const url = result.link || result.url || '#';
+                const editUrl = result.edit_url || '#';
+
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `✓ Brouillon publié! Post ID: <strong>${postId}</strong><br>` +
+                    `<a href="${url}" target="_blank">Voir sur le site →</a>` +
+                    (editUrl !== '#' ? ` | <a href="${editUrl}" target="_blank">Éditer dans WP →</a>` : '');
+            } catch (error) {
+                loadingDiv.classList.remove('active');
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `Erreur: ${error.message}`;
+            }
         }
 
         // Load articles on page load

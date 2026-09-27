@@ -2,12 +2,13 @@
 
 ## 🚀 Status: PRODUCTION READY
 
-**Deployment Status**: ✅ **LIVE on AXON (10.0.0.21)**
-- Validation: ✅ PASSED (0 errors, 3 optional warnings)
+**Deployment Status**: ✅ **LIVE on AXON (10.0.0.21:8090)**
+- Validation: ✅ PASSED (0 errors, 6 warnings)
 - Health Check: ✅ OPERATIONAL
-- API Endpoints: ✅ ALL FUNCTIONAL
+- API Endpoints: ✅ ALL FUNCTIONAL (17 routes)
 - WordPress Integration: ✅ CONNECTED
-- Last Updated: 2026-05-22 13:29:12 UTC
+- article-writer Integration: ✅ CONNECTED (verso formatter)
+- Last Updated: 2026-09-27
 
 ---
 
@@ -28,7 +29,7 @@ verso-content-manager is a FastAPI-based Forge skill that automates WordPress ar
 - **Validation**: Pydantic
 - **Image Processing**: Pillow
 - **Server**: Uvicorn
-- **Infrastructure**: Forge Skill (OnyxSoma 10.0.0.44, port 8091)
+- **Infrastructure**: Forge Skill (OnyxAxon 10.0.0.21, port 8090)
 
 ## Project Structure
 
@@ -40,6 +41,12 @@ verso-content-manager/
 ├── API.md                        # API documentation
 ├── ARCHITECTURE.md               # This file
 ├── TODO.md                       # Task tracking
+├── DIAGRAM.md                    # Mermaid architecture diagram
+├── cron.json                     # Scheduled tasks (health check)
+├── backup.json                   # Backup strategy (none - stateless)
+│
+├── config/
+│   └── verso-content-manager.yaml # Endpoints, settings, design colors
 │
 ├── templates/                    # Article templates
 │   ├── presse.json              # Press article template
@@ -104,12 +111,11 @@ verso-content-manager/
 
 ## Core Components
 
-### 1. Configuration (src/config.py)
+### 1. Configuration (src/config.py + config/verso-content-manager.yaml)
 
-Centralized configuration for:
-- Port, URLs, and service name
-- WordPress API endpoints
-- Vault secret paths
+YAML-based centralized configuration:
+- Endpoints (WordPress, Vault) loaded from config/*.yaml
+- Version read from manifest.json (auto-sync with Forge deploys)
 - Image optimization settings
 - Color definitions for HTML styling
 
@@ -343,40 +349,61 @@ PublishResponse (post_id, url, edit_url, status)
 ## Deployment
 
 ### Forge Configuration
-- **Port**: 8091
-- **Target**: OnyxAxon (10.0.0.21) 🚀 **PRODUCTION**
+- **Port**: 8090
+- **Target**: OnyxAxon (10.0.0.21)
 - **Type**: Python/FastAPI
 - **Secret**: wordpress_credentials (Vault: 10.0.0.44:8050)
-- **Status**: ✅ **DEPLOYED & LIVE**
-- **Version**: 1.0.6
-- **PID**: 2640927
+- **Status**: ✅ DEPLOYED & LIVE
+- **Version**: 1.0.16
 - **Systemd**: onyx-verso-content-manager (active)
+- **Cron**: daily-health-check
 
 ### Health Check
-- Endpoint: `GET http://10.0.0.21:8091/health`
-- Status: ✅ **HEALTHY**
-- Returns: `{"status": "healthy", "service": "verso-content-manager", "version": "1.0.0"}`
+- Endpoint: `GET http://10.0.0.21:8090/health`
+- Returns: `{"status": "healthy", "service": "verso-content-manager", "version": "1.0.16"}`
 
 ### Dashboard
-- Endpoint: `GET http://10.0.0.21:8091/`
-- Interactive web UI for article management
-- Status: ✅ **OPERATIONAL**
+- Endpoint: `GET http://10.0.0.21:8090/`
+- Interactive web UI for article management + article-writer integration
 
 ### API Documentation
-- Swagger UI: `http://10.0.0.21:8091/docs`
-- ReDoc: `http://10.0.0.21:8091/redoc`
+- Swagger UI: `http://10.0.0.21:8090/docs`
+- ReDoc: `http://10.0.0.21:8090/redoc`
 
 ### Repository
 - GitHub: `https://github.com/VersoVet/verso-content-manager`
 - Branch: `main` (production), `dev` (development)
-- Last deployment: 2026-05-22 13:29:12 UTC
+
+## article-writer Integration
+
+### Pipeline
+
+```
+article-writer (8461)              verso-content-manager (8090)         WordPress
+GET /write/contents/{id}/verso --> POST /content/publish-verso      --> verso-vet.com
+     (structured format)               (images + HTML + publish)       (draft/publish)
+```
+
+### Heading Hierarchy
+- WordPress post title: h1 (managed by theme)
+- Section titles: h2
+- Sub-headings in content (## shifted to ###): h3
+- Sub-sub-headings (### shifted to ####): h4
+
+### Profile Category Mapping
+| Profile | WordPress Category |
+|---------|-------------------|
+| article_specialistes | Specialistes |
+| article_praticiens | Praticiens |
+| fiche_info_proprietaire | Proprietaires |
+| synthese_formation | Formation |
+| livre_complet | Livres |
+| (default) | Actualite |
 
 ## Future Enhancements
 
 1. **Article Scheduling**: Schedule publication for future dates
-2. **Media Library Sync**: Browse WordPress media in dashboard
-3. **Featured Image Auto-assignment**: Automatically set first image as featured
-4. **Bulk Operations**: Create multiple articles from CSV/JSON
-5. **Version History**: Track article revisions
-6. **Slack Integration**: Publish notifications to Slack
-7. **Preview Mode**: Live preview before publishing
+2. **Media Library Browser**: Browse WordPress media in dashboard
+3. **Bulk Operations**: Create multiple articles from CSV/JSON
+4. **Article Revision Tracking**: Track article revisions
+5. **End-to-end Zotero Test**: Full pipeline with real references and images
