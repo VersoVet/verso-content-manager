@@ -13,7 +13,7 @@ with open(_CONFIG_PATH) as _f:
 # API Configuration
 PORT: int = int(os.getenv("PORT", str(CONFIG["settings"]["port"])))
 SERVICE_NAME: str = "verso-content-manager"
-VERSION: str = "1.0.13"
+VERSION: str = "1.0.14"
 
 # WordPress Configuration
 WP_URL: str = CONFIG["endpoints"]["wordpress"]
