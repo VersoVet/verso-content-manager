@@ -1,6 +1,6 @@
 {
   "name": "verso-content-manager",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "core": {
     "name": "verso-content-manager",
     "type": "python",
@@ -27,7 +27,7 @@
       "health_check": "GET /health"
     },
     "deployment": {
-      "target_host": "10.0.0.21",
+      "target_host": "OnyxAxon",
       "platform": "linux",
       "service_name": "verso-content-manager",
       "restart_policy": "always"
