@@ -81,3 +81,4 @@ graph TD
     class fastapi,dashboard_srv,articles_mod,media_mod,seo_mod,templates_mod,wp_client,vault,builder,optimizer module;
     class wp_api,onyx_vault,pillow external;
 ```
+

@@ -407,3 +407,4 @@ GET /write/contents/{id}/verso --> POST /content/publish-verso      --> verso-ve
 3. **Bulk Operations**: Create multiple articles from CSV/JSON
 4. **Article Revision Tracking**: Track article revisions
 5. **End-to-end Zotero Test**: Full pipeline with real references and images
+
