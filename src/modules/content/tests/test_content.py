@@ -270,15 +270,16 @@ def test_build_html_heading_hierarchy() -> None:
     assert "[CITE:" not in html
 
 
-def test_build_verso_html() -> None:
-    """Test _build_verso_html with VersoSection objects.
+def test_build_verso_gutenberg() -> None:
+    """Test _build_verso_gutenberg with VersoSection objects.
 
     Verifies:
-        - Section titles render as h2
-        - Section content is rendered as HTML
-        - Images are injected with correct captions
+        - Gutenberg block format (<!-- wp:xxx -->)
+        - Section titles render as wp:heading h2
+        - Section content produces wp:paragraph blocks
+        - Images injected as wp:image blocks
     """
-    from src.modules.content.service import _build_verso_html
+    from src.modules.content.service import _build_verso_gutenberg
 
     sections: list[VersoSection] = [
         VersoSection(
@@ -308,18 +309,22 @@ def test_build_verso_html() -> None:
         ),
     }
 
-    html: str = _build_verso_html(sections, bibliography, media_map)
+    result: str = _build_verso_gutenberg(sections, bibliography, media_map)
 
+    # Gutenberg block format
+    assert "<!-- wp:heading -->" in result
+    assert "<!-- wp:paragraph -->" in result
     # Section title as h2
-    assert "<h2>Verso Section</h2>" in html
-    # Content rendered (bold text)
-    assert "<strong>bold</strong>" in html
-    # Image injected with caption
-    assert "verso-vet.com/wp-content/uploads/verso-img.webp" in html
-    assert "Verso image caption" in html
-    # Bibliography present
-    assert "Bibliographie" in html
-    assert "Verso Author (2025)" in html
+    assert 'class="wp-block-heading">Verso Section</h2>' in result
+    # Bold text in paragraph
+    assert "<strong>bold</strong>" in result
+    # Image as wp:image block
+    assert "<!-- wp:image" in result
+    assert "verso-vet.com/wp-content/uploads/verso-img.webp" in result
+    assert "Verso image caption" in result
+    # Bibliography
+    assert "Bibliographie" in result
+    assert "Verso Author (2025)" in result
 
 
 @pytest.mark.asyncio

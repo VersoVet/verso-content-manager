@@ -19,6 +19,7 @@ from src.models import (
 )
 from src.modules.articles.service import create_article
 from src.modules.content.dropbox import download_dropbox_image
+from src.modules.content.gutenberg import bibliography_to_gutenberg, section_to_gutenberg
 from src.modules.media.optimizer import optimize_image
 from src.modules.media.uploader import upload_media
 
@@ -133,14 +134,15 @@ def _build_html_content(
     return "\n".join(parts)
 
 
-def _build_verso_html(
+def _build_verso_gutenberg(
     sections: list[VersoSection],
     bibliography: list[VersoBibliographyEntry],
     media_map: dict[str, MediaResponse],
 ) -> str:
-    """Convert verso-formatted sections to HTML.
+    """Convert verso-formatted sections to WordPress Gutenberg blocks.
 
-    The verso format already has shifted heading levels and clean content.
+    Produces native block markup (<!-- wp:xxx -->) for full compatibility
+    with the WordPress block editor.
 
     Args:
         sections: Verso sections with normalized content.
@@ -148,17 +150,21 @@ def _build_verso_html(
         media_map: Mapping of attachment_key to uploaded media.
 
     Returns:
-        Complete HTML content.
+        WordPress Gutenberg block markup.
     """
     parts: list[str] = []
 
-    for section in sections:
-        # Section title as h2
-        parts.append(f"<h2>{escape(section.title)}</h2>")
+    for i, section in enumerate(sections):
+        # Add separator between sections (not before first)
+        if i > 0:
+            parts.append(
+                "<!-- wp:separator -->\n"
+                '<hr class="wp-block-separator has-alpha-channel-opacity"/>\n'
+                "<!-- /wp:separator -->"
+            )
 
-        # Content already has shifted headings and no CITE markers
-        html_section = md.markdown(section.content, extensions=["extra"])
-        parts.append(html_section)
+        # Convert section title + content to Gutenberg blocks
+        parts.append(section_to_gutenberg(section.title, section.content))
 
         # Inject images for this section
         for img in section.images:
@@ -166,17 +172,21 @@ def _build_verso_html(
                 caption = escape(img.caption)
                 alt = caption or "Image"
                 parts.append(
-                    '<figure style="text-align:center; margin:20px 0">'
-                    f'<img src="{media.wp_url}" alt="{alt}" '
-                    'style="max-width:100%; height:auto">'
+                    f'<!-- wp:image {{"sizeSlug":"large"}} -->\n'
+                    f'<figure class="wp-block-image size-large">'
+                    f'<img src="{media.wp_url}" alt="{alt}"/>'
                     f"<figcaption>{caption}</figcaption>"
-                    "</figure>"
+                    f"</figure>\n"
+                    f"<!-- /wp:image -->"
                 )
 
     # Add bibliography
-    parts.append(_format_bibliography(bibliography))
+    bib_entries = [{"formatted": e.formatted} for e in bibliography]
+    bib_blocks = bibliography_to_gutenberg(bib_entries)
+    if bib_blocks:
+        parts.append(bib_blocks)
 
-    return "\n".join(parts)
+    return "\n\n".join(parts)
 
 
 async def _download_and_upload_images(
@@ -291,8 +301,8 @@ async def publish_verso_article(request: VersoArticleRequest) -> PublishResponse
 
     media_map, featured_image_id = await _download_and_upload_images(image_list)
 
-    # Build HTML with verso-specific builder
-    html_content = _build_verso_html(request.sections, request.bibliography, media_map)
+    # Build Gutenberg block markup
+    html_content = _build_verso_gutenberg(request.sections, request.bibliography, media_map)
 
     return await _create_wp_article(
         title=request.title,
