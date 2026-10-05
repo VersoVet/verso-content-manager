@@ -166,6 +166,14 @@ def _build_verso_gutenberg(
         # Clean content: remove inline citation markers and trailing references paragraph
         clean_content = re.sub(r"(?:\[\d+\])+", "", section.content)
         clean_content = re.sub(r"\n*Références\s*:.*$", "", clean_content, flags=re.DOTALL)
+        # Remove LLM-generated bold section title echo (e.g. "**Accroche**\n\n")
+        escaped_title = re.escape(section.title)
+        clean_content = re.sub(
+            rf"^\s*\*\*{escaped_title}\*\*\s*\n*",
+            "",
+            clean_content,
+            flags=re.IGNORECASE,
+        )
         clean_content = clean_content.strip()
 
         # Convert section title + content to Gutenberg blocks
