@@ -163,8 +163,13 @@ def _build_verso_gutenberg(
                 "<!-- /wp:separator -->"
             )
 
+        # Clean content: remove inline citation markers and trailing references paragraph
+        clean_content = re.sub(r"(?:\[\d+\])+", "", section.content)
+        clean_content = re.sub(r"\n*Références\s*:.*$", "", clean_content, flags=re.DOTALL)
+        clean_content = clean_content.strip()
+
         # Convert section title + content to Gutenberg blocks
-        parts.append(section_to_gutenberg(section.title, section.content))
+        parts.append(section_to_gutenberg(section.title, clean_content))
 
         # Inject images for this section
         for img in section.images:
