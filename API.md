@@ -364,6 +364,55 @@ Automatically:
 
 ---
 
+### POST /content/publish-verso
+
+Publish verso-formatted article from article-writer's `/verso` endpoint.
+
+Uses **WordPress Gutenberg block format** — each paragraph, heading, and list
+becomes a separate editable block in the WordPress editor.
+
+**Request:**
+```json
+{
+  "title": "Article Title",
+  "excerpt": "Auto-generated excerpt...",
+  "category": "Actualite",
+  "status": "draft",
+  "sections": [
+    {
+      "id": "sec-1",
+      "title": "Section Title",
+      "content": "Markdown with shifted headings (### = h3)",
+      "images": []
+    }
+  ],
+  "bibliography": [
+    {"zotero_key": "KEY", "formatted": "Author (2024). Title."}
+  ],
+  "metadata": {
+    "total_words": 300,
+    "profile_used": "article_web",
+    "source_content_id": "uuid",
+    "source_package_id": "uuid"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "post_id": 2435,
+  "url": "https://verso-vet.com/?p=2435",
+  "status": "draft",
+  "edit_url": "https://verso-vet.com/wp-admin/post.php?post=2435&action=edit"
+}
+```
+
+**Output format:** WordPress Gutenberg blocks (`<!-- wp:heading -->`,
+`<!-- wp:paragraph -->`, `<!-- wp:list -->`, etc.)
+
+---
+
 ## SEO & Taxonomy
 
 ### GET /seo/categories
