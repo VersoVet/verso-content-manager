@@ -11,8 +11,8 @@ from html import escape
 def markdown_to_gutenberg(markdown_text: str) -> str:
     """Convert markdown text to Gutenberg block markup.
 
-    Handles: headings, paragraphs, bold, italic, lists, separators.
-    Each element becomes a separate wp: block.
+    Handles: headings, paragraphs, bold, italic, lists, separators,
+    and [FIG:KEY] image placement markers.
 
     Args:
         markdown_text: Markdown content.
@@ -29,6 +29,14 @@ def markdown_to_gutenberg(markdown_text: str) -> str:
 
         # Skip empty lines
         if not line:
+            i += 1
+            continue
+
+        # Figure placement marker [FIG:KEY]
+        fig_match = re.match(r"^\[FIG:([A-Za-z0-9_]+)\]$", line)
+        if fig_match:
+            # Insert a placeholder that the service will replace with wp:image
+            blocks.append(f"<!-- FIGURE_PLACEHOLDER:{fig_match.group(1)} -->")
             i += 1
             continue
 
@@ -161,6 +169,30 @@ def _wp_separator() -> str:
         Gutenberg separator block.
     """
     return '<!-- wp:separator -->\n<hr class="wp-block-separator has-alpha-channel-opacity"/>\n<!-- /wp:separator -->'
+
+
+def wp_image(src: str, alt: str, caption: str, media_id: int | None = None) -> str:
+    """Build a wp:image block with caption.
+
+    Args:
+        src: Image URL.
+        alt: Alt text.
+        caption: Image caption (displayed below).
+        media_id: WordPress media library ID.
+
+    Returns:
+        Gutenberg image block with figcaption.
+    """
+    id_attr = f'"id":{media_id},' if media_id else ""
+    caption_html = f"<figcaption>{escape(caption)}</figcaption>" if caption else ""
+    return (
+        f'<!-- wp:image {{{id_attr}"sizeSlug":"full","linkDestination":"none"}} -->\n'
+        f'<figure class="wp-block-image size-full">'
+        f'<img src="{escape(src, quote=True)}" alt="{escape(alt, quote=True)}"/>'
+        f"{caption_html}"
+        f"</figure>\n"
+        f"<!-- /wp:image -->"
+    )
 
 
 # --- Helpers ---

@@ -19,7 +19,7 @@ from src.models import (
 )
 from src.modules.articles.service import create_article
 from src.modules.content.dropbox import download_dropbox_image
-from src.modules.content.gutenberg import bibliography_to_gutenberg, section_to_gutenberg
+from src.modules.content.gutenberg import bibliography_to_gutenberg, section_to_gutenberg, wp_image
 from src.modules.media.optimizer import optimize_image
 from src.modules.media.uploader import upload_media
 
@@ -177,21 +177,34 @@ def _build_verso_gutenberg(
         clean_content = clean_content.strip()
 
         # Convert section title + content to Gutenberg blocks
-        parts.append(section_to_gutenberg(section.title, clean_content))
+        gutenberg_content = section_to_gutenberg(section.title, clean_content)
 
-        # Inject images for this section
+        # Build image caption lookup for this section
+        img_caption_map = {img.attachment_key: img.caption for img in section.images}
+
+        # Replace FIGURE_PLACEHOLDER with actual wp:image blocks
+        placed_keys: set[str] = set()
+
+        def _replace_placeholder(match: re.Match) -> str:  # type: ignore[type-arg]
+            key = match.group(1)
+            if media := media_map.get(key):
+                placed_keys.add(key)
+                caption = img_caption_map.get(key, "")
+                return wp_image(media.wp_url, caption or "Image", caption, media.id)
+            return ""  # Remove placeholder if image not available
+
+        gutenberg_content = re.sub(
+            r"<!-- FIGURE_PLACEHOLDER:([A-Za-z0-9_]+) -->",
+            _replace_placeholder,
+            gutenberg_content,
+        )
+        parts.append(gutenberg_content)
+
+        # Inject remaining images not placed via [FIG:] markers (fallback: end of section)
         for img in section.images:
-            if media := media_map.get(img.attachment_key):
-                caption = escape(img.caption)
-                alt = caption or "Image"
-                parts.append(
-                    f'<!-- wp:image {{"sizeSlug":"large"}} -->\n'
-                    f'<figure class="wp-block-image size-large">'
-                    f'<img src="{media.wp_url}" alt="{alt}"/>'
-                    f"<figcaption>{caption}</figcaption>"
-                    f"</figure>\n"
-                    f"<!-- /wp:image -->"
-                )
+            if img.attachment_key not in placed_keys:
+                if media := media_map.get(img.attachment_key):
+                    parts.append(wp_image(media.wp_url, img.caption or "Image", img.caption, media.id))
 
     # Add bibliography
     bib_entries = [{"formatted": e.formatted} for e in bibliography]
